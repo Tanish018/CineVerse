@@ -50,10 +50,8 @@ public class TheatreService {
     public TheatreResponse updateTheatre(Long id, TheatreRequest request) {
         Theatre theatre = theatreRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Theatre not found with id: " + id));
-        if (theatre.getName().equalsIgnoreCase(request.getName()) || !theatre.getCity().equalsIgnoreCase(request.getCity())) {
-            if (theatreRepository.existsByNameIgnoreCaseAndCityIgnoreCaseAndActiveTrue(request.getName(), request.getCity())) {
-                throw new BadRequestException("Theatre with this name already exists in this city");
-            }
+        if (theatreRepository.existsByNameIgnoreCaseAndCityIgnoreCaseAndActiveTrueAndIdNot(request.getName(), request.getCity(), id)) {
+            throw new BadRequestException("Theatre with this name already exists in this city");
         }
         theatreMapper.updateEntity(theatre,request);
         Theatre updatedTheatre = theatreRepository.save(theatre);
