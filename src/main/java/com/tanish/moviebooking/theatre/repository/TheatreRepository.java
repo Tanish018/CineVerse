@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TheatreRepository extends JpaRepository<Theatre,Long> {
 
-    boolean existsByNameIgnoreCaseAndCityIgnoreCase(String name,String city);
+    boolean existsByNameIgnoreCaseAndCityIgnoreCaseAndActiveTrue(String name,String city);
     List<Theatre> findByActiveTrueOrderByNameAsc();
     List<Theatre> findByCityIgnoreCaseAndActiveTrueOrderByNameAsc(String city);
 

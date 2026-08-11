@@ -3,7 +3,6 @@ package com.tanish.moviebooking.theatre.controller;
 import com.tanish.moviebooking.common.ApiResponse;
 import com.tanish.moviebooking.theatre.dto.TheatreRequest;
 import com.tanish.moviebooking.theatre.dto.TheatreResponse;
-import com.tanish.moviebooking.theatre.entity.Theatre;
 import com.tanish.moviebooking.theatre.service.TheatreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +42,7 @@ public class TheatreController {
         return new ApiResponse<>(true, "Theatre retrieved successfully", response);
     }
 
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<TheatreResponse> updateTheatre(@PathVariable Long id, @Valid @RequestBody TheatreRequest request) {
         TheatreResponse response = theatreService.updateTheatre(id, request);

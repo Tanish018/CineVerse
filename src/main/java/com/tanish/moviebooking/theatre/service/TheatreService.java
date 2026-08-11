@@ -20,7 +20,7 @@ public class TheatreService {
     private final TheatreMapper theatreMapper;
 
     public TheatreResponse createTheatre(TheatreRequest request) {
-        if (theatreRepository.existsByNameIgnoreCaseAndCityIgnoreCase(request.getName(), request.getCity())) {
+        if (theatreRepository.existsByNameIgnoreCaseAndCityIgnoreCaseAndActiveTrue(request.getName(), request.getCity())) {
             throw new BadRequestException("Theatre with this name already exists in this city");
         }
         Theatre theatre = theatreMapper.toEntity(request);
@@ -51,7 +51,7 @@ public class TheatreService {
         Theatre theatre = theatreRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Theatre not found with id: " + id));
         if (theatre.getName().equalsIgnoreCase(request.getName()) || !theatre.getCity().equalsIgnoreCase(request.getCity())) {
-            if (theatreRepository.existsByNameIgnoreCaseAndCityIgnoreCase(request.getName(), request.getCity())) {
+            if (theatreRepository.existsByNameIgnoreCaseAndCityIgnoreCaseAndActiveTrue(request.getName(), request.getCity())) {
                 throw new BadRequestException("Theatre with this name already exists in this city");
             }
         }
