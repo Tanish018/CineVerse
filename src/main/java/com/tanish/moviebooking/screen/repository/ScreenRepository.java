@@ -11,5 +11,6 @@ public interface ScreenRepository extends JpaRepository<Screen, Long> {
     List<Screen> findByTheatreIdAndActiveTrueOrderByScreenNumberAsc(Long theatreId);
     Optional<Screen> findByTheatreIdAndScreenNumber(Long screenNumber, Long theatreId);
     long countByTheatreIdAndActiveTrue(Long theatreId);
+    List<Screen> findByTheatreIdAndActiveTrueOrderByScreenNumberDesc(Long theatreId);
 
 }

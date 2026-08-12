@@ -9,6 +9,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class ScreenMapper {
 
+    public Screen createDefaultScreen(Theatre theatre, int screenNumber) {
+        return Screen.builder()
+                .theatre(theatre)
+                .screenNumber(screenNumber)
+                .name("Screen " + screenNumber)
+                .capacity(100)
+                .screenType("2D")
+                .active(true)
+                .build();
+    }
+
     public Screen toEntity(ScreenRequest request, Theatre theatre, Integer screenNumber) {
         return Screen.builder()
                 .theatre(theatre)

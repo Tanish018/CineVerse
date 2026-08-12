@@ -37,6 +37,7 @@ public class ScreenController {
         return new ApiResponse<>(true, "Successfully Updated Screen by id", response);
     }
 
+    // SHOULD NOT BE USED (SINCE, IT CAN CREATE INCONSISTENCY IN THE DATA) :-
     @DeleteMapping("/{id}")
     @PreAuthorize("setRole('ADMIN')")
     public ApiResponse<ScreenResponse> deactivateScreen(@PathVariable("id") Long id) {

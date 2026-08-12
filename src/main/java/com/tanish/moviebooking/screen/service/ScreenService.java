@@ -22,6 +22,23 @@ public class ScreenService {
     private final TheatreRepository theatreRepository;
     private final ScreenMapper screenMapper;
 
+    public void synchronizeScreens(Theatre theatre, Integer oldCount, Integer newCount) {
+        if (newCount > oldCount) {
+            for (int i=oldCount+1 ; i<=newCount ; i++) {
+                Screen screen = screenMapper.createDefaultScreen(theatre,i);
+                screenRepository.save(screen);
+            }
+        } else if  (newCount < oldCount) {
+            List<Screen> screens = screenRepository.findByTheatreIdAndActiveTrueOrderByScreenNumberDesc(theatre.getId());
+            int deactivateScreens = oldCount - newCount;
+            for (int i=0 ; i<deactivateScreens && i<screens.size() ; i++) {
+                Screen screen = screens.get(i);
+                screen.setActive(false);
+                screenRepository.save(screen);
+            }
+        }
+    }
+
     private Theatre getActiveTheatre(Long theatreId){
         Theatre theatre = theatreRepository.findById(theatreId)
                 .orElseThrow(() -> new ResourceNotFoundException("Theatre not found with id: " + theatreId));
