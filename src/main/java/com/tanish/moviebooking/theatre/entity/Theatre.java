@@ -30,6 +30,9 @@ public class Theatre {
     private String pincode;
 
     @Column(nullable = false)
+    private Integer numberOfScreens;
+
+    @Column(nullable = false)
     private Boolean active;
 
     private LocalDateTime createdAt;

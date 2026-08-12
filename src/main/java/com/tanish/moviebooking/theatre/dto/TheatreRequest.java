@@ -1,5 +1,6 @@
 package com.tanish.moviebooking.theatre.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -14,6 +15,10 @@ public class TheatreRequest {
 
     @NotBlank(message = "Address is required")
     private String address;
+
+    @NotBlank(message = "Number of Screens are required")
+    @Min(value = 1, message = "Theatre must have at least one screen")
+    private Integer numberOfScreens;
 
     private String pincode;
 }

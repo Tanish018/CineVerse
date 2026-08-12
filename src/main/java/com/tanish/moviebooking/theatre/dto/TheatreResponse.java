@@ -13,6 +13,7 @@ public class TheatreResponse {
     private String name;
     private String city;
     private String address;
+    private Integer numberOfScreens;
     private String pincode;
     private Boolean active;
 

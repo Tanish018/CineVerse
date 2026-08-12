@@ -14,6 +14,7 @@ public class TheatreMapper {
                 .name(request.getName())
                 .city(request.getCity())
                 .address(request.getAddress())
+                .numberOfScreens(request.getNumberOfScreens())
                 .pincode(request.getPincode())
                 .active(true)
                 .build();
@@ -25,6 +26,7 @@ public class TheatreMapper {
                 .name(theatre.getName())
                 .city(theatre.getCity())
                 .address(theatre.getAddress())
+                .numberOfScreens(theatre.getNumberOfScreens())
                 .pincode(theatre.getPincode())
                 .active(theatre.getActive())
                 .build();
@@ -34,6 +36,7 @@ public class TheatreMapper {
         theatre.setName(request.getName());
         theatre.setCity(request.getCity());
         theatre.setAddress(request.getAddress());
+        theatre.setNumberOfScreens(request.getNumberOfScreens());
         theatre.setPincode(request.getPincode());
     }
 
