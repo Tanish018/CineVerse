@@ -31,7 +31,7 @@ public class ScreenController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("setRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ScreenResponse> updateScreen(@PathVariable("id") Long id, @Valid @RequestBody ScreenRequest screenRequest) {
         ScreenResponse response = screenService.updateScreen(id, screenRequest);
         return new ApiResponse<>(true, "Successfully Updated Screen by id", response);
@@ -39,7 +39,7 @@ public class ScreenController {
 
     // SHOULD NOT BE USED (SINCE, IT CAN CREATE INCONSISTENCY IN THE DATA) :-
     @DeleteMapping("/{id}")
-    @PreAuthorize("setRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ScreenResponse> deactivateScreen(@PathVariable("id") Long id) {
         screenService.deactivateScreen(id);
         return new ApiResponse<>(true, "Successfully Deactivated Screen by id", null);
