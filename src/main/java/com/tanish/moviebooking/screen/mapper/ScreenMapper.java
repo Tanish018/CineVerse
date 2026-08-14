@@ -20,12 +20,16 @@ public class ScreenMapper {
                 .build();
     }
 
-    public Screen toEntity(ScreenRequest request, Theatre theatre, Integer screenNumber) {
+    public Screen toEntity(ScreenRequest request, Theatre theatre) {
+        int capacity = request.getRegularSeats() + request.getPremiumSeats() + request.getReclinerSeats();
         return Screen.builder()
                 .theatre(theatre)
-                .screenNumber(screenNumber)
+                .screenNumber(request.getScreenNumber())
                 .name(request.getName())
-                .capacity(request.getCapacity())
+                .capacity(capacity)
+                .regularSeats(request.getRegularSeats())
+                .premiumSeats(request.getPremiumSeats())
+                .reclinerSeats(request.getReclinerSeats())
                 .screenType(request.getScreenType())
                 .active(true)
                 .build();
@@ -38,6 +42,9 @@ public class ScreenMapper {
                 .screenNumber(screen.getScreenNumber())
                 .name(screen.getName())
                 .capacity(screen.getCapacity())
+                .regularSeats(screen.getRegularSeats())
+                .premiumSeats(screen.getPremiumSeats())
+                .reclinerSeats(screen.getReclinerSeats())
                 .screenType(screen.getScreenType())
                 .active(screen.getActive())
                 .build();

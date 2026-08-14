@@ -24,8 +24,6 @@ public class TheatreService {
     private final TheatreRepository theatreRepository;
     private final TheatreMapper theatreMapper;
 
-    private final ScreenRepository screenRepository;
-    private final ScreenMapper screenMapper;
     private final ScreenService screenService;
 
     @Transactional
@@ -35,10 +33,6 @@ public class TheatreService {
         }
         Theatre theatre = theatreMapper.toEntity(request);
         Theatre savedTheatre = theatreRepository.save(theatre);
-        for (int i=1 ; i<=request.getNumberOfScreens() ; i++) {
-            Screen screen = screenMapper.createDefaultScreen(savedTheatre,i);
-            screenRepository.save(screen);
-        }
         return theatreMapper.toResponse(savedTheatre);
     }
 

@@ -38,6 +38,15 @@ public class Screen {
     @Column(nullable = false)
     private Integer capacity;
 
+    @Column(name = "regular_seats", nullable = false)
+    private Integer regularSeats;
+
+    @Column(name = "premium_seats", nullable = false)
+    private Integer premiumSeats;
+
+    @Column(name = "recliner_seats", nullable = false)
+    private Integer reclinerSeats;
+
     @Column(nullable = false)
     private String screenType;
 

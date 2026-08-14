@@ -9,6 +9,7 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     List<Seat> findByScreenIdAndActiveTrueOrderBySeatNumberAsc(Long screenId);
     long countByScreenIdAndActiveTrue(Long screenId);
+    List<Seat> findByScreenIdOrderByIdAsc(Long screenId);
     boolean existsByScreenIdAndSeatNumber(Long screenId, String seatNumber);
 
 }

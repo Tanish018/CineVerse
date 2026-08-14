@@ -30,6 +30,13 @@ public class ScreenController {
         return new ApiResponse<>(true, "Successfully fetched Screen by id", response);
     }
 
+    @PostMapping("/theatre/{theatreId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<ScreenResponse> createScreen(@PathVariable("theatreId") Long theatreId, @Valid @RequestBody ScreenRequest request) {
+        ScreenResponse response = screenService.createScreen(theatreId, request);
+        return new ApiResponse<>(true, "Screen Created Successfully", response);
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ScreenResponse> updateScreen(@PathVariable("id") Long id, @Valid @RequestBody ScreenRequest screenRequest) {

@@ -14,6 +14,9 @@ public class ScreenResponse {
     private Integer screenNumber;
     private String name;
     private Integer capacity;
+    private Integer regularSeats;
+    private Integer premiumSeats;
+    private Integer reclinerSeats;
     private String screenType;
     private Boolean active;
 

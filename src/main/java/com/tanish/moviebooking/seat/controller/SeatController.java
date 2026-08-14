@@ -22,11 +22,11 @@ public class SeatController {
         return new ApiResponse<>(true, "Seats fetched successfully", res);
     }
 
-    @PostMapping("/screen/{screenId}/generate")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<Void> generateSeats(@PathVariable Long screenId) {
-        seatService.generateSeats(screenId);
-        return  new ApiResponse<>(true, "Seats generated successfully", null);
-    }
+//    @PostMapping("/screen/{screenId}/generate")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ApiResponse<Void> generateSeats(@PathVariable Long screenId) {
+//        seatService.generateSeats(screenId);
+//        return  new ApiResponse<>(true, "Seats generated successfully", null);
+//    }
 
 }
