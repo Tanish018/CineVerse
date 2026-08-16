@@ -37,6 +37,11 @@ public class ShowService {
         if (!request.getStartTime().isBefore(request.getEndTime())) {
             throw new BadRequestException("Start time should be before end time");
         }
+        if (request.getShowDate().isBefore(LocalDate.now())) {
+            throw new BadRequestException(
+                    "Show date cannot be in the past"
+            );
+        }
     }
 
     public ShowResponse createShow (ShowRequest request) {
