@@ -75,7 +75,10 @@ public class BookingService {
             throw new ResourceNotFoundException("One or More Seats Not Found");
         }
         validateSeats(show,seats);
-        List<Long> bookedSeatsIds = bookingSeatRepository.findBookedSeatIds(show.getId(), BookingStatus.CONFIRMED, seatIds);
+        List<Long> bookedSeatsIds = bookingSeatRepository.findBookedSeatIds(
+                show.getId(),
+                List.of(BookingStatus.PENDING_PAYMENT, BookingStatus.CONFIRMED),
+                seatIds);
         if (!bookedSeatsIds.isEmpty()) {
             throw new BadRequestException("One or More Seats are already booked");
         }
@@ -84,7 +87,7 @@ public class BookingService {
         Booking booking = Booking.builder()
                 .userId(request.getUserId())
                 .show(show)
-                .status(BookingStatus.CONFIRMED)
+                .status(BookingStatus.PENDING_PAYMENT)
                 .totalAmount(BigDecimal.ZERO)
                 .build();
         for (Seat seat : seats) {

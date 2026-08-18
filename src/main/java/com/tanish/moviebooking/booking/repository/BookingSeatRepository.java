@@ -12,9 +12,9 @@ public interface BookingSeatRepository extends JpaRepository<BookingSeat, Long> 
     @Query("""
             SELECT bs.seat.id FROM BookingSeat bs
             WHERE bs.booking.show.id = :showId
-            AND bs.booking.status = :status
+            AND bs.booking.status IN :statuses
             AND bs.seat.id IN :seatIds
             """)
-    List<Long> findBookedSeatIds(Long showId, BookingStatus status, List<Long> seatIds);
+    List<Long> findBookedSeatIds(Long showId, List<BookingStatus> statuses, List<Long> seatIds);
 
 }
