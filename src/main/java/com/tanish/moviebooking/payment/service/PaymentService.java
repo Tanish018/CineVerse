@@ -16,6 +16,7 @@ import com.tanish.moviebooking.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -37,15 +38,15 @@ public class PaymentService {
     private String cancelUrl;
 
     private Booking getBooking(Long id) {
-        Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking NOt Found : " + id));
-        return booking;
+        return bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking Not Found : " + id));
     }
 
     private Long toSmallestUnit(BigDecimal amount) {
         return amount.movePointRight(2).longValueExact();
     }
 
+    @Transactional
     public PaymentResponse createCheckoutSession(Long bookingId) {
         Booking booking = getBooking(bookingId);
         if (booking.getStatus() != BookingStatus.PENDING_PAYMENT) {
@@ -97,6 +98,34 @@ public class PaymentService {
         }
     }
 
+    @Transactional
+    public void handleCheckoutCompleted(String stripeSessionId) {
+        Payment payment = paymentRepository.findByStripeSessionId(stripeSessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found for Stripe session"));
+        if (payment.getStatus() ==  PaymentStatus.SUCCESS) {
+            return;
+        }
+        payment.setStatus(PaymentStatus.SUCCESS);
+        Booking booking = payment.getBooking();
+        booking.setStatus(BookingStatus.CONFIRMED);
+        paymentRepository.save(payment);
+        bookingRepository.save(booking);
+    }
 
+    @Transactional
+    public void handleCheckoutExpired(String stripeSessionId) {
+        Payment payment = paymentRepository.findByStripeSessionId(stripeSessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found for Stripe session"));
+        if (payment.getStatus() ==  PaymentStatus.SUCCESS) {
+            return;
+        }
+        payment.setStatus(PaymentStatus.CANCELED);
+        Booking booking = payment.getBooking();
+        if (booking.getStatus() == BookingStatus.PENDING_PAYMENT) {
+            booking.setStatus(BookingStatus.CANCELLED);
+            bookingRepository.save(booking);
+        }
+        paymentRepository.save(payment);
+    }
 
 }
