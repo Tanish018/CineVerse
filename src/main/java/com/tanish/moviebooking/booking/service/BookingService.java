@@ -10,6 +10,7 @@ import com.tanish.moviebooking.booking.repository.BookingRepository;
 import com.tanish.moviebooking.booking.repository.BookingSeatRepository;
 import com.tanish.moviebooking.exception.BadRequestException;
 import com.tanish.moviebooking.exception.ResourceNotFoundException;
+import com.tanish.moviebooking.payment.service.PaymentService;
 import com.tanish.moviebooking.seat.entity.Seat;
 import com.tanish.moviebooking.seat.entity.SeatType;
 import com.tanish.moviebooking.seat.repository.SeatRepository;
@@ -32,6 +33,8 @@ public class BookingService {
     private final ShowRepository showRepository;
     private final SeatRepository seatRepository;
     private final BookingMapper bookingMapper;
+
+    private final PaymentService  paymentService;
 
     private Show getActiveShow(Long id) {
         Show show = showRepository.findById(id)
@@ -121,6 +124,16 @@ public class BookingService {
         Booking booking = getBooking(id);
         if (booking.getStatus() == BookingStatus.CANCELLED) {
             throw new BadRequestException("Booking already cancelled");
+        }
+        if (booking.getStatus() == BookingStatus.PENDING_PAYMENT) {
+            booking.setStatus(BookingStatus.CANCELLED);
+            bookingRepository.save(booking);
+            return;
+        }
+        if (booking.getStatus() == BookingStatus.CONFIRMED) {
+            paymentService.refundPayment(booking.getId());
+            booking.setStatus(BookingStatus.CANCELLED);
+            bookingRepository.save(booking);
         }
         booking.setStatus(BookingStatus.CANCELLED);
         bookingRepository.save(booking);
