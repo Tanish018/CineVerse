@@ -105,6 +105,14 @@ public class PaymentService {
         if (payment.getStatus() ==  PaymentStatus.SUCCESS) {
             return;
         }
+        com.stripe.model.checkout.Session session;
+        try {
+            com.stripe.Stripe.apiKey = stripeSecretKey;
+            session = com.stripe.model.checkout.Session.retrieve(stripeSessionId);
+        } catch(StripeException e) {
+            throw new BadRequestException("Unable to retrieve Stripe checkout session");
+        }
+        payment.setStripePaymentIntentId(session.getPaymentIntent());
         payment.setStatus(PaymentStatus.SUCCESS);
         Booking booking = payment.getBooking();
         booking.setStatus(BookingStatus.CONFIRMED);
@@ -126,6 +134,34 @@ public class PaymentService {
             bookingRepository.save(booking);
         }
         paymentRepository.save(payment);
+    }
+
+    @Transactional
+    public void refundPayment(Long bookingId) {
+        Payment payment = paymentRepository.findByBookingId(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found for Booking " + bookingId));
+        if (payment.getStatus() !=  PaymentStatus.SUCCESS) {
+            throw new BadRequestException("Payment cannot be refunded");
+        }
+        if (payment.getStripePaymentIntentId() == null) {
+            throw new BadRequestException("Stripe payment intent not found");
+        }
+        try {
+            com.stripe.Stripe.apiKey = stripeSecretKey;
+            com.stripe.param.RefundCreateParams params = com.stripe.param.RefundCreateParams
+                    .builder()
+                    .setPaymentIntent(payment.getStripePaymentIntentId())
+                    .build();
+            com.stripe.model.Refund refund = com.stripe.model.Refund.create(params);
+            if ("succeeded".equals(refund.getStatus())) {
+                payment.setStatus(PaymentStatus.REFUNDED);
+                paymentRepository.save(payment);
+            } else {
+                throw new BadRequestException("Stripe refund was not successful");
+            }
+        } catch(StripeException e) {
+            throw new BadRequestException("Unable to process Stripe refund");
+        }
     }
 
 }

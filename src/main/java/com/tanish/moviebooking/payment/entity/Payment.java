@@ -34,6 +34,9 @@ public class Payment {
     @Column(name = "stripe_session_id", unique = true)
     private String stripeSessionId;
 
+    @Column(name = "stripe_payment_intent_id")
+    private String stripePaymentIntentId;
+
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
