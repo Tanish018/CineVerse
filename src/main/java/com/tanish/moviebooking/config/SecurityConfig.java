@@ -21,8 +21,13 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
-                        auth -> auth.requestMatchers("/auth/**")
-                        .permitAll().anyRequest().authenticated()
+                        auth -> auth
+                                .requestMatchers("/auth/**")
+                                .permitAll()
+                                .requestMatchers("/payments/webhook")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
                 )
                 .addFilterBefore(jwtFilter,
                         org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);

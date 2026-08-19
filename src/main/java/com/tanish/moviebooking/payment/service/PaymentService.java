@@ -28,7 +28,7 @@ public class PaymentService {
     private final BookingRepository bookingRepository;
     private final PaymentMapper paymentMapper;
 
-    @Value("${stripe.secret_key}")
+    @Value("${stripe.secret-key}")
     private String stripeSecretKey;
 
     @Value("${stripe.success-url}")
