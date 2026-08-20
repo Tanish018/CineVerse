@@ -114,11 +114,6 @@ public class BookingService {
         return bookingMapper.toResponse(booking);
     }
 
-    public List<BookingResponse> getBookingByUser(Long userId) {
-        return bookingRepository.findByUserIdAndStatusOrderByCreatedAtDesc(userId, BookingStatus.CONFIRMED)
-                .stream().map(bookingMapper::toResponse).toList();
-    }
-
     @Transactional
     public void cancelBooking(Long id) {
         Booking booking = getBooking(id);
@@ -137,6 +132,11 @@ public class BookingService {
         }
         booking.setStatus(BookingStatus.CANCELLED);
         bookingRepository.save(booking);
+    }
+
+    public List<BookingResponse> getBookingHistory(Long userId) {
+        return bookingRepository.findByUserIdOrderByCreatedAtDesc(userId)
+                .stream().map(bookingMapper::toResponse).toList();
     }
 
 }

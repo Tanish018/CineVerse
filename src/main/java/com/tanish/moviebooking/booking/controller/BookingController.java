@@ -29,10 +29,10 @@ public class BookingController {
         return new ApiResponse<>(true, "Booking fetched Successfully", res);
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user/{userId}/history")
     public ApiResponse<List<BookingResponse>> getBookingByUserId(@PathVariable Long userId){
-        List<BookingResponse> res = bookingService.getBookingByUser(userId);
-        return new ApiResponse<>(true, "Booking fetched Successfully", res);
+        List<BookingResponse> res = bookingService.getBookingHistory(userId);
+        return new ApiResponse<>(true, "Bookings fetched Successfully", res);
     }
 
     @DeleteMapping("/{bookingId}")
