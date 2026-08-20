@@ -2,6 +2,7 @@ package com.tanish.moviebooking.booking.service;
 
 import com.tanish.moviebooking.booking.dto.BookingRequest;
 import com.tanish.moviebooking.booking.dto.BookingResponse;
+import com.tanish.moviebooking.booking.dto.BookingSearchRequest;
 import com.tanish.moviebooking.booking.entity.Booking;
 import com.tanish.moviebooking.booking.entity.BookingSeat;
 import com.tanish.moviebooking.booking.entity.BookingStatus;
@@ -147,6 +148,16 @@ public class BookingService {
     public List<BookingResponse> getBookingsByShow(Long showId) {
         return bookingRepository.findByShowIdOrderByCreatedAtDesc(showId)
                 .stream().map(bookingMapper::toResponse).toList();
+    }
+
+    public List<BookingResponse> searchBookings(BookingSearchRequest request) {
+        return bookingRepository.searchBookings(
+                request.getTheatreId(),
+                request.getCity(),
+                request.getMovieId(),
+                request.getShowDate(),
+                request.getBookingStatus()
+        ).stream().map(bookingMapper::toResponse).toList();
     }
 
 }

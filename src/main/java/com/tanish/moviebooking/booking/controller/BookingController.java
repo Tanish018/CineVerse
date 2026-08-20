@@ -2,6 +2,7 @@ package com.tanish.moviebooking.booking.controller;
 
 import com.tanish.moviebooking.booking.dto.BookingRequest;
 import com.tanish.moviebooking.booking.dto.BookingResponse;
+import com.tanish.moviebooking.booking.dto.BookingSearchRequest;
 import com.tanish.moviebooking.booking.service.BookingService;
 import com.tanish.moviebooking.common.ApiResponse;
 import jakarta.validation.Valid;
@@ -53,6 +54,13 @@ public class BookingController {
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<BookingResponse>> getBookingByShowId(@PathVariable Long showId){
         List<BookingResponse> res = bookingService.getBookingsByShow(showId);
+        return new ApiResponse<>(true, "Bookings fetched Successfully", res);
+    }
+
+    @GetMapping("/admin/search")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<List<BookingResponse>> searchBookings(@ModelAttribute BookingSearchRequest request){
+        List<BookingResponse> res = bookingService.searchBookings(request);
         return new ApiResponse<>(true, "Bookings fetched Successfully", res);
     }
 
