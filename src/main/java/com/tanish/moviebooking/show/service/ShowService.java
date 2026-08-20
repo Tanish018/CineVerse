@@ -7,6 +7,7 @@ import com.tanish.moviebooking.screen.entity.Screen;
 import com.tanish.moviebooking.screen.repository.ScreenRepository;
 import com.tanish.moviebooking.show.dto.ShowRequest;
 import com.tanish.moviebooking.show.dto.ShowResponse;
+import com.tanish.moviebooking.show.dto.ShowSearchRequest;
 import com.tanish.moviebooking.show.entity.Show;
 import com.tanish.moviebooking.show.mapper.ShowMapper;
 import com.tanish.moviebooking.show.repository.ShowRepository;
@@ -128,6 +129,15 @@ public class ShowService {
         show.setReclinerPrice(request.getReclinerPrice());
         Show updatedShow = showRepository.save(show);
         return showMapper.toResponse(updatedShow);
+    }
+
+    public List<ShowResponse> searchShows(ShowSearchRequest request) {
+        return showRepository.searchShows(
+                request.getCity(),
+                request.getTheatreId(),
+                request.getMovieId(),
+                request.getShowDate()
+        ).stream().map(showMapper::toResponse).toList();
     }
 
 }

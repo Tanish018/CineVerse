@@ -42,4 +42,14 @@ public interface ShowRepository extends JpaRepository<Show, Long> {
             LocalTime endTime
     );
 
+    @Query("""
+            SELECT s FROM Show s JOIN s.screen sc JOIN sc.theatre t WHERE s.active = true
+            AND (:city IS NULL OR LOWER(t.city) = LOWER(:city))
+            AND (:theatreId IS NULL OR t.id = :theatreId)
+            AND (:movieId IS NULL OR s.movieId = :movieId)
+            AND (:showDate IS NULL OR s.showDate = :showDate)
+            ORDER BY s.showDate ASC, s.startTime ASC
+            """)
+    List<Show> searchShows(String city, Long theatreId, Long movieId, LocalDate showDate);
+
 }

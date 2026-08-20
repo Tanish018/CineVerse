@@ -3,6 +3,7 @@ package com.tanish.moviebooking.show.controller;
 import com.tanish.moviebooking.common.ApiResponse;
 import com.tanish.moviebooking.show.dto.ShowRequest;
 import com.tanish.moviebooking.show.dto.ShowResponse;
+import com.tanish.moviebooking.show.dto.ShowSearchRequest;
 import com.tanish.moviebooking.show.service.ShowService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +70,12 @@ public class ShowController {
     public ApiResponse<Void> deleteShow(@PathVariable("showId") Long showId) {
         showService.DeleteShow(showId);
         return new ApiResponse<>(true, "Show Deleted Successfully", null);
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<List<ShowResponse>> searchShows(@ModelAttribute ShowSearchRequest request) {
+        List<ShowResponse> res = showService.searchShows(request);
+        return new ApiResponse<>(true, "Shows retrieved successfully", res);
     }
 
 }
