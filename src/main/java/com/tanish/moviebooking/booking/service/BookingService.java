@@ -139,4 +139,14 @@ public class BookingService {
                 .stream().map(bookingMapper::toResponse).toList();
     }
 
+    public List<BookingResponse> getAllBookings() {
+        return bookingRepository.findAllByOrderByCreatedAtDesc()
+                .stream().map(bookingMapper::toResponse).toList();
+    }
+
+    public List<BookingResponse> getBookingsByShow(Long showId) {
+        return bookingRepository.findByShowIdOrderByCreatedAtDesc(showId)
+                .stream().map(bookingMapper::toResponse).toList();
+    }
+
 }

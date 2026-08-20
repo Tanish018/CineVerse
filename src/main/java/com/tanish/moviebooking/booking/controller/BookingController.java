@@ -6,6 +6,7 @@ import com.tanish.moviebooking.booking.service.BookingService;
 import com.tanish.moviebooking.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +40,20 @@ public class BookingController {
     public ApiResponse<Void> cancelBooking(@PathVariable Long bookingId){
         bookingService.cancelBooking(bookingId);
         return new ApiResponse<>(true, "Booking cancelled successfully", null);
+    }
+
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<List<BookingResponse>> getAllBookings() {
+        List<BookingResponse> res = bookingService.getAllBookings();
+        return new ApiResponse<>(true, "Bookings fetched Successfully", res);
+    }
+
+    @GetMapping("/admin/show/{showId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<List<BookingResponse>> getBookingByShowId(@PathVariable Long showId){
+        List<BookingResponse> res = bookingService.getBookingsByShow(showId);
+        return new ApiResponse<>(true, "Bookings fetched Successfully", res);
     }
 
 }
