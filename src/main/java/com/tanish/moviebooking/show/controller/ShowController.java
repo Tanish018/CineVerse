@@ -1,9 +1,12 @@
 package com.tanish.moviebooking.show.controller;
 
 import com.tanish.moviebooking.common.ApiResponse;
+import com.tanish.moviebooking.seat.dto.SeatResponse;
+import com.tanish.moviebooking.seat.entity.Seat;
 import com.tanish.moviebooking.show.dto.ShowRequest;
 import com.tanish.moviebooking.show.dto.ShowResponse;
 import com.tanish.moviebooking.show.dto.ShowSearchRequest;
+import com.tanish.moviebooking.show.dto.ShowSeatResponse;
 import com.tanish.moviebooking.show.service.ShowService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -76,6 +79,12 @@ public class ShowController {
     public ApiResponse<List<ShowResponse>> searchShows(@ModelAttribute ShowSearchRequest request) {
         List<ShowResponse> res = showService.searchShows(request);
         return new ApiResponse<>(true, "Shows retrieved successfully", res);
+    }
+
+    @GetMapping("/{showId}/seats")
+    public ApiResponse<List<ShowSeatResponse>> getSeatsByShow(@PathVariable Long showId) {
+        List<ShowSeatResponse> res = showService.getSeatsByShow(showId);
+        return new ApiResponse<>(true, "Fetched available seats successfully", res);
     }
 
 }

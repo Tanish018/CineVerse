@@ -1,19 +1,26 @@
 package com.tanish.moviebooking.show.service;
 
+import com.tanish.moviebooking.booking.entity.BookingStatus;
+import com.tanish.moviebooking.booking.repository.BookingSeatRepository;
 import com.tanish.moviebooking.exception.BadRequestException;
 import com.tanish.moviebooking.exception.ResourceNotFoundException;
 import com.tanish.moviebooking.screen.dto.ScreenResponse;
 import com.tanish.moviebooking.screen.entity.Screen;
 import com.tanish.moviebooking.screen.repository.ScreenRepository;
+import com.tanish.moviebooking.seat.entity.Seat;
+import com.tanish.moviebooking.seat.entity.SeatType;
+import com.tanish.moviebooking.seat.repository.SeatRepository;
 import com.tanish.moviebooking.show.dto.ShowRequest;
 import com.tanish.moviebooking.show.dto.ShowResponse;
 import com.tanish.moviebooking.show.dto.ShowSearchRequest;
+import com.tanish.moviebooking.show.dto.ShowSeatResponse;
 import com.tanish.moviebooking.show.entity.Show;
 import com.tanish.moviebooking.show.mapper.ShowMapper;
 import com.tanish.moviebooking.show.repository.ShowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,6 +30,8 @@ public class ShowService {
 
     private final ShowRepository showRepository;
     private final ScreenRepository screenRepository;
+    private final SeatRepository seatRepository;
+    private final BookingSeatRepository  bookingSeatRepository;
     private final ShowMapper showMapper;
 
     private Screen getActiveScreen(Long id) {
@@ -138,6 +147,33 @@ public class ShowService {
                 request.getMovieId(),
                 request.getShowDate()
         ).stream().map(showMapper::toResponse).toList();
+    }
+
+    private BigDecimal getSeatPrice(Show show, SeatType seatType) {
+        return switch (seatType) {
+            case REGULAR -> show.getRegularPrice();
+            case PREMIUM -> show.getPremiumPrice();
+            case RECLINER -> show.getReclinerPrice();
+        };
+    }
+
+    public List<ShowSeatResponse> getSeatsByShow(Long showId) {
+        Show show = getActiveShow(showId);
+        List<Seat> seats = seatRepository.findByScreenIdAndActiveTrueOrderBySeatNumberAsc(show.getScreen().getId());
+        List<Long> bookedSeatIds = bookingSeatRepository.findBookedSeatIdsByShow(showId,
+                List.of(BookingStatus.PENDING_PAYMENT, BookingStatus.CONFIRMED));
+        return seats.stream().map(seat -> {
+            BigDecimal price = getSeatPrice(show, seat.getSeatType());
+            boolean available = !bookedSeatIds.contains(seat.getId());
+            return ShowSeatResponse.builder()
+                    .seatId(seat.getId())
+                    .seatNumber(seat.getSeatNumber())
+                    .rowLabel(seat.getRowLabel())
+                    .seatType(seat.getSeatType())
+                    .price(price)
+                    .available(available)
+                    .build();
+        }).toList();
     }
 
 }
