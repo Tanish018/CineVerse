@@ -78,6 +78,9 @@ public class BookingService {
         if (seats.size() != seatIds.size()) {
             throw new ResourceNotFoundException("One or More Seats Not Found");
         }
+        if (request.getSeatIds().size() != request.getSeatIds().stream().distinct().count()) {
+            throw new BadRequestException("Duplicate seats are not allowed");
+        }
         validateSeats(show,seats);
         List<Long> bookedSeatsIds = bookingSeatRepository.findBookedSeatIds(
                 show.getId(),
