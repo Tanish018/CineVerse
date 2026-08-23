@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -26,5 +27,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
         ORDER BY b.createdAt DESC
         """)
     List<Booking> searchBookings(Long theatreId, String city, Long movieId, LocalDate showDate, BookingStatus bookingStatus);
+
+    @Query("""
+            SELECT b FROM Booking b
+            WHERE b.status = :status
+            AND b.paymentExpiresAt <= :currentTime
+            """)
+    List<Booking> findExpiredPendingBookings(BookingStatus status, LocalDateTime currentTime);
 
 }

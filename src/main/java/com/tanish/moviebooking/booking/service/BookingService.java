@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,6 +97,7 @@ public class BookingService {
                 .show(show)
                 .status(BookingStatus.PENDING_PAYMENT)
                 .totalAmount(BigDecimal.ZERO)
+                .paymentExpiresAt(LocalDateTime.now().plusMinutes(10))
                 .build();
         for (Seat seat : seats) {
             BigDecimal price = getSeatPrice(show, seat.getSeatType());

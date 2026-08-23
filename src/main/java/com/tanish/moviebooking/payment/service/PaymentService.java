@@ -84,6 +84,7 @@ public class PaymentService {
                     .setCancelUrl(cancelUrl)
                     .setClientReferenceId(booking.getId().toString())
                     .putMetadata("bookingId", booking.getId().toString())
+                    .setExpiresAt(java.time.Instant.now().plusSeconds(600).getEpochSecond())
                     .addLineItem(lineItem)
                     .build();
 
@@ -112,9 +113,10 @@ public class PaymentService {
         } catch(StripeException e) {
             throw new BadRequestException("Unable to retrieve Stripe checkout session");
         }
+        Booking booking = payment.getBooking();
+        if (booking.getStatus() != BookingStatus.PENDING_PAYMENT) return;
         payment.setStripePaymentIntentId(session.getPaymentIntent());
         payment.setStatus(PaymentStatus.SUCCESS);
-        Booking booking = payment.getBooking();
         booking.setStatus(BookingStatus.CONFIRMED);
         paymentRepository.save(payment);
         bookingRepository.save(booking);

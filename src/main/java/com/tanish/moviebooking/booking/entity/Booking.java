@@ -39,6 +39,7 @@ public class Booking {
     @Builder.Default
     private List<BookingSeat> bookingSeats = new ArrayList<>();
 
+    private LocalDateTime paymentExpiresAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
