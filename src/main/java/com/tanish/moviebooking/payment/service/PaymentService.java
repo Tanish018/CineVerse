@@ -84,7 +84,7 @@ public class PaymentService {
                     .setCancelUrl(cancelUrl)
                     .setClientReferenceId(booking.getId().toString())
                     .putMetadata("bookingId", booking.getId().toString())
-                    .setExpiresAt(java.time.Instant.now().plusSeconds(600).getEpochSecond())
+                    .setExpiresAt(java.time.Instant.now().plusSeconds(1800).getEpochSecond())
                     .addLineItem(lineItem)
                     .build();
 
