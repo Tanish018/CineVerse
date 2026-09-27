@@ -30,4 +30,6 @@ public class MovieRequest {
 
     private String posterUrl;
 
+    private String heroImageUrl;
+
 }

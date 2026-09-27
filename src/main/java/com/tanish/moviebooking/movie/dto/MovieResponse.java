@@ -19,6 +19,7 @@ public class MovieResponse {
     private Integer durationMinutes;
     private LocalDate releaseDate;
     private String posterUrl;
+    private String heroImageUrl;
     private Boolean active;
 
 }

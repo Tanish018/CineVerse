@@ -17,6 +17,7 @@ public class MovieMapper {
                 .durationMinutes(request.getDurationMinutes())
                 .releaseDate(request.getReleaseDate())
                 .posterUrl(request.getPosterUrl())
+                .heroImageUrl(request.getHeroImageUrl())
                 .active(true)
                 .build();
     }
@@ -31,6 +32,7 @@ public class MovieMapper {
                 .durationMinutes(movie.getDurationMinutes())
                 .releaseDate(movie.getReleaseDate())
                 .posterUrl(movie.getPosterUrl())
+                .heroImageUrl(movie.getHeroImageUrl())
                 .active(movie.getActive())
                 .build();
     }
@@ -43,5 +45,6 @@ public class MovieMapper {
         movie.setDurationMinutes(request.getDurationMinutes());
         movie.setReleaseDate(request.getReleaseDate());
         movie.setPosterUrl(request.getPosterUrl());
+        movie.setHeroImageUrl(request.getHeroImageUrl());
     }
 }

@@ -12,6 +12,7 @@ public class BookingMapper {
                 .id(booking.getId())
                 .userId(booking.getUserId())
                 .showId(booking.getShow().getId())
+                .showLanguage(booking.getShow().getLanguage())
                 .status(booking.getStatus())
                 .totalAmount(booking.getTotalAmount())
                 .seatIds(booking.getBookingSeats()

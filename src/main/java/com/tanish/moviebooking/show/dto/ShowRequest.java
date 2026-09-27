@@ -2,6 +2,7 @@ package com.tanish.moviebooking.show.dto;
 
 import com.tanish.moviebooking.screen.entity.Screen;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,9 @@ public class ShowRequest {
 
     @NotNull(message = "Movie is required")
     private Long movieId;
+
+    @NotBlank(message = "Show language is required")
+    private String language;
 
     @NotNull(message = "Screen is required")
     private Long screenId;

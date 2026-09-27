@@ -62,6 +62,7 @@ public class ShowService {
         }
         Show show = Show.builder()
                 .movieId(request.getMovieId())
+                .language(request.getLanguage())
                 .screen(screen)
                 .showDate(request.getShowDate())
                 .startTime(request.getStartTime())
@@ -129,6 +130,7 @@ public class ShowService {
             throw new BadRequestException("Another show is already scheduled on this screen during this time");
         }
         show.setMovieId(request.getMovieId());
+        show.setLanguage(request.getLanguage());
         show.setScreen(screen);
         show.setShowDate(request.getShowDate());
         show.setStartTime(request.getStartTime());

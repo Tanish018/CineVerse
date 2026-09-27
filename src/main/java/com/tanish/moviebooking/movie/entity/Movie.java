@@ -39,6 +39,8 @@ public class Movie {
 
     private String posterUrl;
 
+    private String heroImageUrl;
+
     @Column(nullable = false)
     private Boolean active;
 

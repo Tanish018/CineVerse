@@ -12,6 +12,7 @@ public class ShowMapper {
         return ShowResponse.builder()
                 .id(show.getId())
                 .movieId(show.getMovieId())
+                .language(show.getLanguage())
                 .screenId(show.getScreen().getId())
                 .showDate(show.getShowDate())
                 .startTime(show.getStartTime())

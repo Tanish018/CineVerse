@@ -24,6 +24,9 @@ public class Show {
 
     private Long movieId;
 
+    @Column
+    private String language;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "screen_id",  nullable = false)
     private Screen screen;

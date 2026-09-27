@@ -17,6 +17,7 @@ public class BookingResponse {
     private Long id;
     private Long userId;
     private Long showId;
+    private String showLanguage;
     private BookingStatus status;
     private BigDecimal totalAmount;
     private List<Long> seatIds;

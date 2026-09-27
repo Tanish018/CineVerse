@@ -17,6 +17,7 @@ public class ShowResponse {
 
     private Long id;
     private Long movieId;
+    private String language;
     private Long screenId;
     private LocalDate showDate;
     private LocalTime startTime;
