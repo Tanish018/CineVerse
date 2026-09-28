@@ -13,6 +13,7 @@ import com.tanish.moviebooking.payment.entity.Payment;
 import com.tanish.moviebooking.payment.entity.PaymentStatus;
 import com.tanish.moviebooking.payment.mapper.PaymentMapper;
 import com.tanish.moviebooking.payment.repository.PaymentRepository;
+import com.tanish.moviebooking.redis.service.RedisSeatLockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
     private final PaymentMapper paymentMapper;
+
+    private final RedisSeatLockService redisSeatLockService;
 
     @Value("${stripe.secret-key}")
     private String stripeSecretKey;
@@ -120,6 +123,10 @@ public class PaymentService {
         booking.setStatus(BookingStatus.CONFIRMED);
         paymentRepository.save(payment);
         bookingRepository.save(booking);
+
+        for (var bookingSeat : booking.getBookingSeats()) {
+            redisSeatLockService.unlockSeat(booking.getShow().getId(), bookingSeat.getSeat().getId());
+        }
     }
 
     @Transactional
@@ -134,6 +141,9 @@ public class PaymentService {
         if (booking.getStatus() == BookingStatus.PENDING_PAYMENT) {
             booking.setStatus(BookingStatus.CANCELLED);
             bookingRepository.save(booking);
+            for (var bookingSeat : booking.getBookingSeats()) {
+                redisSeatLockService.unlockSeat(booking.getShow().getId(), bookingSeat.getSeat().getId());
+            }
         }
         paymentRepository.save(payment);
     }

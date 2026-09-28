@@ -25,6 +25,8 @@ public class SecurityConfig {
                         auth -> auth
                                 .requestMatchers("/auth/**")
                                 .permitAll()
+                                .requestMatchers("/api/payments/webhook")
+                                .permitAll()
                                 .requestMatchers("/payments/webhook")
                                 .permitAll()
                                 .requestMatchers(HttpMethod.GET, "/movies/**")

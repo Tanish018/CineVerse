@@ -12,6 +12,7 @@ import com.tanish.moviebooking.booking.repository.BookingSeatRepository;
 import com.tanish.moviebooking.exception.BadRequestException;
 import com.tanish.moviebooking.exception.ResourceNotFoundException;
 import com.tanish.moviebooking.payment.service.PaymentService;
+import com.tanish.moviebooking.redis.service.RedisSeatLockService;
 import com.tanish.moviebooking.seat.entity.Seat;
 import com.tanish.moviebooking.seat.entity.SeatType;
 import com.tanish.moviebooking.seat.repository.SeatRepository;
@@ -35,6 +36,8 @@ public class BookingService {
     private final ShowRepository showRepository;
     private final SeatRepository seatRepository;
     private final BookingMapper bookingMapper;
+
+    private final RedisSeatLockService redisSeatLockService;
 
     private final PaymentService  paymentService;
 
@@ -112,6 +115,19 @@ public class BookingService {
         booking.setTotalAmount(totalAmount);
         booking.setBookingSeats(bookingSeats);
         Booking savedBooking = bookingRepository.save(booking);
+
+        List<Long> lockedSeatIds = new ArrayList<>();
+        for (Seat seat : seats) {
+            boolean locked = redisSeatLockService.lockSeat(show.getId(), seat.getId(), savedBooking.getId());
+            if (!locked) {
+                for (Long lockedSeatId : lockedSeatIds) {
+                    redisSeatLockService.unlockSeat(show.getId(), lockedSeatId);
+                }
+                throw new BadRequestException("One or more seats are currently being held by another user");
+            }
+            lockedSeatIds.add(seat.getId());
+        }
+
         return bookingMapper.toResponse(savedBooking);
     }
 
@@ -127,12 +143,18 @@ public class BookingService {
             throw new BadRequestException("Booking already cancelled");
         }
         if (booking.getStatus() == BookingStatus.PENDING_PAYMENT) {
+            for (BookingSeat bookingSeat : booking.getBookingSeats()) {
+                redisSeatLockService.unlockSeat(booking.getShow().getId(),bookingSeat.getSeat().getId());
+            }
             booking.setStatus(BookingStatus.CANCELLED);
             bookingRepository.save(booking);
             return;
         }
         if (booking.getStatus() == BookingStatus.CONFIRMED) {
             paymentService.refundPayment(booking.getId());
+            for (BookingSeat bookingSeat : booking.getBookingSeats()) {
+                redisSeatLockService.unlockSeat(booking.getShow().getId(),bookingSeat.getSeat().getId());
+            }
             booking.setStatus(BookingStatus.CANCELLED);
             bookingRepository.save(booking);
         }
