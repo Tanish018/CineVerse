@@ -7,6 +7,7 @@ import com.tanish.moviebooking.movie.dto.MovieResponse;
 import com.tanish.moviebooking.movie.entity.Movie;
 import com.tanish.moviebooking.movie.mapper.MovieMapper;
 import com.tanish.moviebooking.movie.repository.MovieRepository;
+import com.tanish.moviebooking.redis.service.RedisMovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,8 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
 
+    private final RedisMovieService redisMovieService;
+
     public MovieResponse createMovie(MovieRequest request) {
         if (movieRepository.existsByTitleIgnoreCase(request.getTitle())) {
             throw new BadRequestException("Movie with this title already exists");
@@ -29,10 +32,14 @@ public class MovieService {
     }
 
     public List<MovieResponse> getAllMovies() {
-        return movieRepository.findByActiveTrueOrderByReleaseDateDesc()
+        List<MovieResponse> cachedMovies = redisMovieService.getAllMovies();
+        if (cachedMovies != null) return cachedMovies;
+        List<MovieResponse> movies = movieRepository.findByActiveTrueOrderByReleaseDateDesc()
                 .stream()
                 .map(movieMapper::toResponse)
                 .toList();
+        redisMovieService.saveAllMovies(movies);
+        return movies;
     }
 
     public MovieResponse getMovieById(Long id) {
