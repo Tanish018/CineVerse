@@ -28,7 +28,9 @@ public class MovieService {
         }
         Movie movie = movieMapper.toEntity(request);
         Movie savedMovie =  movieRepository.save(movie);
-        return movieMapper.toResponse(savedMovie);
+        MovieResponse response = movieMapper.toResponse(savedMovie);
+        redisMovieService.deleteAllMovies();
+        return response;
     }
 
     public List<MovieResponse> getAllMovies() {
@@ -43,13 +45,17 @@ public class MovieService {
     }
 
     public MovieResponse getMovieById(Long id) {
+        MovieResponse cachedMovie = redisMovieService.getMovie(id);
+        if (cachedMovie != null) return cachedMovie;
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
 
         if (!movie.getActive()) {
             throw new ResourceNotFoundException("Movie not found with id: " + id);
         }
-        return movieMapper.toResponse(movie);
+        MovieResponse response = movieMapper.toResponse(movie);
+        redisMovieService.saveMovie(response);
+        return response;
     }
 
     public MovieResponse updateMovie(Long id, MovieRequest request) {
@@ -62,7 +68,10 @@ public class MovieService {
         }
         movieMapper.updateEntity(movie, request);
         Movie updatedMovie = movieRepository.save(movie);
-        return movieMapper.toResponse(updatedMovie);
+        MovieResponse response = movieMapper.toResponse(updatedMovie);
+        redisMovieService.deleteAllMovies();
+        redisMovieService.deleteMovie(id);
+        return response;
     }
 
     public void deleteMovie(Long id) {
@@ -71,6 +80,8 @@ public class MovieService {
 
         movie.setActive(false);
         movieRepository.save(movie);
+        redisMovieService.deleteAllMovies();
+        redisMovieService.deleteMovie(id);
     }
 
 }
