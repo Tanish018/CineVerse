@@ -1,0 +1,70 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: cineverse-mysql
+    environment:
+      MYSQL_DATABASE: movie_booking
+      MYSQL_USER: cineverse
+      MYSQL_PASSWORD: ${DB_PASSWORD:-moviebooking01}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-moviepass01}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: cineverse-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./moviebooking
+      dockerfile: Dockerfile
+    container_name: cineverse-backend
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/movie_booking
+      DB_USERNAME: cineverse
+      DB_PASSWORD: ${DB_PASSWORD:-moviebooking01}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in your .env file}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_SUCCESS_URL: ${STRIPE_SUCCESS_URL:-http://localhost/payment/success}
+      STRIPE_CANCEL_URL: ${STRIPE_CANCEL_URL:-http://localhost/payment/cancel}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cineverse-frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  mysql_data:
+  redis_data:

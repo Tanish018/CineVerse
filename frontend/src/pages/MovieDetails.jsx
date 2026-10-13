@@ -383,66 +383,57 @@ const MovieDetails = () => {
 
                       <div className="space-y-5">
                         {Object.values(screens).map(({ screen, showList }) => {
-                          const screenLanguages = Array.from(
-                            new Set(showList.map((s) => s.language).filter(Boolean))
-                          );
-                          if (screenLanguages.length === 0 && movie.language) {
-                            movie.language
-                              .split(',')
-                              .map((l) => l.trim())
-                              .filter(Boolean)
-                              .forEach((l) => screenLanguages.push(l));
-                          }
-
                           return (
-                          <div
-                            key={screen.id}
-                            className="p-4 rounded-2xl bg-gray-900/60 border border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4"
-                          >
-                            <div>
-                              <div className="flex items-center gap-2 flex-wrap">
+                            <div key={screen.id} className="p-4 rounded-2xl bg-gray-900/60 border border-gray-800">
+                              <div className="flex items-center gap-2 flex-wrap mb-4">
                                 <span className="text-sm font-bold text-white">{screen.name}</span>
                                 {screen.screenType && (
                                   <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-300 border border-amber-500/20">
                                     {screen.screenType}
                                   </span>
                                 )}
-                                {screenLanguages.map((lang) => (
-                                  <span
-                                    key={lang}
-                                    className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-sky-500/10 text-sky-400 border border-sky-500/20"
+                                <span className="text-[11px] text-gray-500">
+                                  {showList.length} {showList.length === 1 ? 'show' : 'shows'}
+                                </span>
+                              </div>
+
+                              <div className="grid gap-3 sm:grid-cols-2">
+                                {showList.map((show) => (
+                                  <div
+                                    key={show.id}
+                                    className="rounded-xl border border-gray-700 bg-[#0D1117] p-4 transition-colors hover:border-gray-600"
                                   >
-                                    {lang}
-                                  </span>
+                                    <div className="flex items-start justify-between gap-3">
+                                      <div>
+                                        <span className="inline-flex px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                                          {show.language || 'Language not set'}
+                                        </span>
+                                        <div className="flex items-center gap-1.5 mt-3 text-sm font-bold text-white">
+                                          <Clock className="w-4 h-4 text-[#EF233C]" />
+                                          <span>{formatTime(show.startTime)}</span>
+                                          <span className="text-xs font-normal text-gray-500">
+                                            to {formatTime(show.endTime)}
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <Link
+                                        to={`/shows/${show.id}/seats`}
+                                        className="shrink-0 rounded-lg bg-[#EF233C] px-3 py-2 text-[10px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#DC143C]"
+                                      >
+                                        Book
+                                      </Link>
+                                    </div>
+                                    <div className="mt-4 grid grid-cols-3 gap-2 border-t border-gray-800 pt-3 text-[10px] text-gray-400">
+                                      <span>Reg <strong className="block text-white">{formatCurrency(show.regularPrice)}</strong></span>
+                                      <span>Prem <strong className="block text-amber-400">{formatCurrency(show.premiumPrice)}</strong></span>
+                                      <span>Rec <strong className="block text-purple-400">{formatCurrency(show.reclinerPrice)}</strong></span>
+                                    </div>
+                                  </div>
                                 ))}
                               </div>
-                              <div className="flex items-center gap-3 text-[11px] text-gray-400 mt-1.5">
-                                <span>Reg: <strong className="text-white">{formatCurrency(showList[0]?.regularPrice)}</strong></span>
-                                <span>Prem: <strong className="text-amber-400">{formatCurrency(showList[0]?.premiumPrice)}</strong></span>
-                                <span>Rec: <strong className="text-purple-400">{formatCurrency(showList[0]?.reclinerPrice)}</strong></span>
-                              </div>
                             </div>
-
-                            <div className="flex flex-wrap gap-2.5">
-                              {showList.map((show) => (
-                                <Link
-                                  key={show.id}
-                                  to={`/shows/${show.id}/seats`}
-                                  className="group flex flex-col items-center justify-center px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-700 hover:border-[#EF233C] hover:bg-gray-800 transition-all hover:scale-105 active:scale-95 shadow-sm"
-                                >
-                                  <div className="flex items-center gap-1.5 text-xs font-bold text-white group-hover:text-[#EF233C] transition-colors">
-                                    <Clock className="w-3.5 h-3.5 text-[#EF233C]" />
-                                    <span>{formatTime(show.startTime)}</span>
-                                  </div>
-                                  <span className="text-[9px] text-gray-500 mt-0.5">
-                                    {show.language || movie.language} • to {formatTime(show.endTime)}
-                                  </span>
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
