@@ -5,8 +5,8 @@ services:
     environment:
       MYSQL_DATABASE: movie_booking
       MYSQL_USER: cineverse
-      MYSQL_PASSWORD: ${DB_PASSWORD:-moviebooking01}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-moviepass01}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in your .env file}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in your .env file}
     ports:
       - "3307:3306"
     volumes:
@@ -39,7 +39,7 @@ services:
       SERVER_PORT: 8080
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/movie_booking
       DB_USERNAME: cineverse
-      DB_PASSWORD: ${DB_PASSWORD:-moviebooking01}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in your .env file}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in your .env file}
